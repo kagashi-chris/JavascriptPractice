@@ -2,6 +2,8 @@
 
 const player0 = document.querySelector('.player--0');
 const player1 = document.querySelector('.player--1');
+const player0Name = document.getElementById('name--0');
+const player1Name = document.getElementById('name--1');
 const player0Score = document.querySelector('#score--0');
 const player1Score = document.getElementById('score--1');
 const player0CurrentScore = document.getElementById('current--0');
@@ -41,7 +43,12 @@ function changeActivePanel(playerTurn) {
   }
 }
 
-function declareWinner() {}
+function declareWinner(player) {
+  changeActivePanel(player);
+  document.getElementById(`name--${player}`).textContent = `Player ${
+    player + 1
+  } 👑`;
+}
 
 function resetGame() {
   score = [0, 0];
@@ -51,6 +58,8 @@ function resetGame() {
   dice.classList.add('hidden');
   player0Score.textContent = score[0];
   player1Score.textContent = score[1];
+  player0Name.textContent = 'Player 1';
+  player1Name.textContent = 'Player 2';
   player0CurrentScore.textContent = 0;
   player1CurrentScore.textContent = 0;
   changeActivePanel(playerTurn);
@@ -95,10 +104,16 @@ buttonHold.addEventListener('click', function () {
   changeActivePlayerCurrentScore(playerTurn, currentScore);
 
   //change player turn
-  changePlayerTurn(playerTurn);
-  changeActivePanel(playerTurn);
+  if (score[0] < 100 && score[1] < 100) {
+    changePlayerTurn(playerTurn);
+    changeActivePanel(playerTurn);
+  } else {
+    if (score[0] >= 100) {
+      declareWinner(0);
+    } else {
+      declareWinner(1);
+    }
+  }
 });
 
-buttonNew.addEventListener('click', function () {
-  resetGame();
-});
+buttonNew.addEventListener('click', resetGame);
