@@ -91,4 +91,47 @@ const displayMovement = function (movements) {
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
+
+const displayDeposit = function (movements) {
+  let i = 0;
+  movements.forEach(function (num) {
+    if (num > 0) {
+      i += num;
+    }
+  });
+  labelSumIn.textContent = i;
+};
+
+const displayWithdrawl = function (movements) {
+  let i = 0;
+  movements.forEach(function (num) {
+    if (num < 0) {
+      i += num;
+    }
+  });
+  labelSumOut.textContent = i;
+};
+
+const displayBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => (acc += mov), 0);
+  labelBalance.textContent = `${balance} EUR`;
+};
+
+displayBalance(account1.movements);
+displayDeposit(account1.movements);
+displayWithdrawl(account1.movements);
 displayMovement(account1.movements);
+
+const creatUsernames = function (accs) {
+  accs.forEach(function (acc) {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+creatUsernames(accounts);
+
+console.log(accounts);
