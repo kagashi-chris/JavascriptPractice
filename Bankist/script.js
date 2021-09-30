@@ -61,10 +61,6 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
-
 const currencies = new Map([
   ['USD', 'United States dollar'],
   ['EUR', 'Euro'],
@@ -73,11 +69,12 @@ const currencies = new Map([
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
-/////////////////////////////////////////////////
-
-const displayMovement = function (movements) {
+const displayMovement = function (movements, sort = false) {
   containerMovements.innerHTML = '';
-  movements.forEach(function (mov, i) {
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
     const html = `        
@@ -134,6 +131,7 @@ console.log(accounts);
 //Event handler
 let currentAccount;
 
+//changes the displayed amount of money base on account.
 const updateUI = function (currentAccount) {
   //display movements
   displayMovement(currentAccount.movements);
@@ -143,6 +141,7 @@ const updateUI = function (currentAccount) {
   displaySummary(currentAccount);
 };
 
+//login button at the top of the screen
 btnLogin.addEventListener('click', function (e) {
   //pervent form from submitting
   e.preventDefault();
@@ -164,6 +163,7 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
+//button to transfer sum from one account to another
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
@@ -184,6 +184,7 @@ btnTransfer.addEventListener('click', function (e) {
   }
 });
 
+//button to delete account from array
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
 
@@ -202,6 +203,7 @@ btnClose.addEventListener('click', function (e) {
   inputCloseUsername.value = inputClosePin.value = '';
 });
 
+//button to loan out money
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = Number(inputLoanAmount.value);
@@ -211,5 +213,19 @@ btnLoan.addEventListener('click', function (e) {
     currentAccount.movements.push(amount);
     updateUI(currentAccount);
     inputLoanAmount.value = '';
+  }
+});
+
+//button to sort the display movements
+let sortSwitch = true;
+
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  displayMovement(currentAccount.movements, sortSwitch);
+  if (sortSwitch === true) {
+    sortSwitch = false;
+  } else {
+    sortSwitch = true;
   }
 });
