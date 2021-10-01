@@ -95,17 +95,30 @@ const convertCurrency = function (acc, amount) {
 };
 
 const startLogOutTimer = function () {
-  //set time to 5 minutes
-  let time = 300;
-  //call timer every second
-  setInterval(function () {
+  const tick = function () {
     const min = `${Math.trunc(time / 60)}`.padStart(2, 0);
     const second = `${time % 60}`.padStart(2, 0);
     const logoutTime = `${min}:${second}`;
+
+    //in each call print remaining time
     labelTimer.textContent = logoutTime;
+
+    if (time === 0) {
+      console.log('time = 0');
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
     time--;
-  }, 1000);
-  //in each call print remaining time
+  };
+  //set time to 5 minutes
+  let time = 300;
+
+  //call timer every second
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
+
   //when 0 seconds, stop timer and log user out
 };
 
@@ -224,7 +237,7 @@ creatUsernames(accounts);
 console.log(accounts);
 
 //Event handler
-let currentAccount;
+let currentAccount, timer;
 
 //changes the displayed amount of money base on account.
 const updateUI = function (currentAccount) {
@@ -252,7 +265,9 @@ btnLogin.addEventListener('click', function (e) {
     labelWelcome.textContent = `Welcome ${currentAccount.owner.split(' ')[0]}`;
     containerApp.style.opacity = 100;
 
-    startLogOutTimer();
+    //check if timer is running, if yes then clear timer
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
 
     updateUI(currentAccount);
 
@@ -284,6 +299,9 @@ btnTransfer.addEventListener('click', function (e) {
     reciever.movementsDates.push(newDate);
     updateUI(currentAccount);
   }
+
+  if (timer) clearInterval(timer);
+  timer = startLogOutTimer();
 });
 
 //button to delete account from array
@@ -303,6 +321,9 @@ btnClose.addEventListener('click', function (e) {
     containerApp.style.opacity = 0;
   }
   inputCloseUsername.value = inputClosePin.value = '';
+
+  if (timer) clearInterval(timer);
+  timer = startLogOutTimer();
 });
 
 //button to loan out money
@@ -317,6 +338,9 @@ btnLoan.addEventListener('click', function (e) {
     updateUI(currentAccount);
     inputLoanAmount.value = '';
   }
+
+  if (timer) clearInterval(timer);
+  timer = startLogOutTimer();
 });
 
 //button to sort the display movements
@@ -331,10 +355,13 @@ btnSort.addEventListener('click', function (e) {
   } else {
     sortSwitch = true;
   }
+
+  if (timer) clearInterval(timer);
+  timer = startLogOutTimer();
 });
 
 console.log(new Date());
 //Fake always log in
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 100;
