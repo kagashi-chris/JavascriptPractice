@@ -44,27 +44,6 @@ document.addEventListener('keydown', function (e) {
 ///////////////////////////////////////
 ///////////////////////////////////////
 
-document.getElementById('section--1');
-
-const message = document.createElement('div');
-message.classList.add('cookie-message');
-message.innerHTML =
-  'We use cookies for improved functionality and analytics. <button class ="btn btn--close-cookie"> Got It!</button>';
-
-header.append(message);
-
-document
-  .querySelector('.btn--close-cookie')
-  .addEventListener('click', function () {
-    message.remove();
-  });
-
-//Styles
-message.style.backgroundColor = '#37383d';
-message.style.width = '105%';
-message.style.height =
-  Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
-
 //button scrolling
 
 btnScrollTo.addEventListener('click', function (e) {
@@ -124,4 +103,41 @@ nav.addEventListener('mouseover', function (e) {
 
 nav.addEventListener('mouseout', function (e) {
   handleHover(e, 1);
+});
+
+//sticky navigation
+const navHeight = nav.getBoundingClientRect().height;
+
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+
+headerObserver.observe(header);
+
+//Reveal sections
+
+const revealSection = function (entries, ob) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  entry.target.classList.remove('section--hidden');
+  ob.unobserve(entry.target);
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.2,
+});
+allSections.forEach(function (section) {
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden');
 });
