@@ -19,9 +19,6 @@ const closeModal = function () {
   overlay.classList.add('hidden');
 };
 
-// for (let i = 0; i < btnsOpenModal.length; i++)
-//   btnsOpenModal[i].addEventListener('click', openModal);
-
 btnsOpenModal.forEach(modal => modal.addEventListener('click', openModal));
 
 btnCloseModal.addEventListener('click', closeModal);
@@ -74,12 +71,11 @@ btnScrollTo.addEventListener('click', function (e) {
 });
 
 //page navigation
-document.querySelectorAll('.nav__link').forEach(function (el) {
-  el.addEventListener('click', function (e) {
-    console.log('LINK');
-    e.preventDefault();
-    const id = this.getAttribute('href');
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  e.preventDefault();
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
     console.log(id);
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-  });
+  }
 });
