@@ -17,6 +17,12 @@ const section1 = document.querySelector('#section--1');
 const tabs = document.querySelectorAll('.operations__tab');
 const tabContainer = document.querySelector('.operations__tab-container');
 const tabContent = document.querySelectorAll('.operations__content');
+const imgTarget = document.querySelectorAll('img[data-src]');
+const slides = document.querySelectorAll('.slide');
+const slider = document.querySelector('.slider');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const dotContainer = document.querySelector('.dots');
 
 const openModal = function (e) {
   e.preventDefault();
@@ -140,4 +146,62 @@ const sectionObserver = new IntersectionObserver(revealSection, {
 allSections.forEach(function (section) {
   sectionObserver.observe(section);
   section.classList.add('section--hidden');
+});
+
+//Lazy loading images
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  //replace source attribute
+  entry.target.src = entry.target.dataset.src;
+
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
+  });
+  observer.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0.15,
+  rootMargin: '200px',
+});
+
+imgTarget.forEach(img => imgObserver.observe(img));
+
+//Slider
+let curSlide = 0;
+const maxSlides = slides.length;
+
+slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i}%)`));
+
+const goToSlide = function (slide) {
+  slides.forEach(
+    (s, i) => (s.style.transform = `translateX(${100 * (i - curSlide)}%)`)
+  );
+};
+
+const prevSlide = function () {
+  curSlide--;
+  if (curSlide < 0) {
+    curSlide = maxSlides - 1;
+  }
+  goToSlide(curSlide);
+};
+
+const nextSlide = function () {
+  curSlide++;
+  if (curSlide > maxSlides - 1) curSlide = 0;
+  goToSlide(curSlide);
+};
+
+btnRight.addEventListener('click', nextSlide);
+
+btnLeft.addEventListener('click', prevSlide);
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'ArrowLeft') prevSlide();
+  else if (e.key === 'ArrowRight') nextSlide();
 });
